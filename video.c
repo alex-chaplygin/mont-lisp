@@ -89,19 +89,19 @@ void video_update(byte *map, int screen_width, int screen_height, byte *tiles_da
     byte *dst;
     byte *data;
     for (int j = 0; j < screen_height; j++) {
-	dst = video_buffer + j * (SCREEN_WIDTH << 3); // установка позиции в начало строчки тайлов
 	for (int i = 0; i < screen_width; i++) {
+	    dst = video_buffer + j * (SCREEN_WIDTH << 3) + (i << 3); // установка позиции в начало строчки тайлов
 	    data = tiles_data + (*map++ << 4); // каждый тайл - 16 байт
 	    for (int row = 0; row < 8; row++) { // цикл по строкам тайла
 		for (int k = 0; k < 2; k++) { // 2 раза по 4 пикселя
-		    *dst++ = *data >> 6;
+		    *dst++ = *data >> 6 & 0xFF;
 		    *dst++ = *data >> 4 & 0xFF;
 		    *dst++ = *data >> 2 & 0xFF;
 		    *dst++ = *data++ & 0xFF;
 		}
 		dst = dst - 8 + SCREEN_WIDTH; // возврат назад и переход на следующую строку
 	    }
-	    dst = dst - (SCREEN_WIDTH << 3) + 8; // возврат вверх на 8 строк и переход на тайл справа
+	    //dst = dst - (SCREEN_WIDTH << 3) + 8; // возврат вверх на 8 строк и переход на тайл справа
 	}
     }
     SDL_UnlockSurface(screen);
