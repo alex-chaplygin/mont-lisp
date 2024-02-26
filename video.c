@@ -66,19 +66,19 @@ void video_init(int scale)
 }
 
 /// Обработка событий клавиатуры и мыши
-/*int video_get_events()
+int video_get_events()
 {
   SDL_Event e;
   if (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT)
       return 0;
-    else if (e.type == SDL_KEYDOWN)
+    /*   else if (e.type == SDL_KEYDOWN)
       set_key(e.key.keysym.scancode, 1);
     else if (e.type == SDL_KEYUP)
-      set_key(e.key.keysym.scancode, 0);
+    set_key(e.key.keysym.scancode, 0);*/
   }
   return 1;
-}*/
+}
 
 /** 
  * Обновление графики.

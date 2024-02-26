@@ -1,4 +1,4 @@
-CFLAGS=-fPIC -I/usr/include/SDL2
+CFLAGS=-fPIC -I/usr/local/include/SDL2
 
 all: video.so
 

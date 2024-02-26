@@ -1,6 +1,6 @@
 (defpackage :video
   (:use :cl)
-  (:export :video-init :video-update :video-close :init-lib :close-lib))
+  (:export :video-init :video-get-events :video-update :video-close :init-lib :close-lib))
 
 (in-package :video)
 
@@ -9,6 +9,7 @@
     (t (:default "./video")))
   (cffi:use-foreign-library video)
   (cffi:defcfun "video_init" :void (scale :int))
+  (cffi:defcfun "video_get_events" :int)
   (cffi:defcfun "video_update" :void (map :pointer) (screen_width :int) (screen_height :int) (tiles_data :pointer))
   (cffi:defcfun "video_close" :void))
 
