@@ -12,6 +12,7 @@ SDL_Renderer *renderer;		/**< устройство вывода */
 SDL_Surface *screen;		/**< поверхность экрана без курсора мыши */
 byte palette[4*3] = {
     0,0,0, //черный
+    0, 0xaa, 0, //зеленый
     0xaa, 0, 0, //красный
     0xaa, 0x55, 0 // коричневый
 }; /**< палитра 4 цвета CGA*/
@@ -94,10 +95,10 @@ void video_update(byte *map, int screen_width, int screen_height, byte *tiles_da
 	    data = tiles_data + (*map++ << 4); // каждый тайл - 16 байт
 	    for (int row = 0; row < 8; row++) { // цикл по строкам тайла
 		for (int k = 0; k < 2; k++) { // 2 раза по 4 пикселя
-		    *dst++ = *data >> 6 & 0xFF;
-		    *dst++ = *data >> 4 & 0xFF;
-		    *dst++ = *data >> 2 & 0xFF;
-		    *dst++ = *data++ & 0xFF;
+		    *dst++ = *data >> 6 & 3;
+		    *dst++ = *data >> 4 & 3;
+		    *dst++ = *data >> 2 & 3;
+		    *dst++ = *data++ & 3;
 		}
 		dst = dst - 8 + SCREEN_WIDTH; // возврат назад и переход на следующую строку
 	    }
