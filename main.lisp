@@ -2,8 +2,8 @@
 (ql:quickload :cffi)
 (load "video.lisp")
 (load "tiles.lisp")
+(load "render.lisp")
 
-(defvar *screen* (make-array 1000 :element-type '(unsigned-byte 8)))
 (defvar q)
 
 (defun main ()
@@ -17,8 +17,5 @@
   (video:video-close))
 
 (main)
-
-(dotimes (i 127)
-  (setf (aref *screen* i) 1))
 
 (video:close-lib)
