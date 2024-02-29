@@ -19,6 +19,10 @@
     (setf (aref *screen* (+ 1 +screen-width+ pos)) (aref tiles 2))
     (setf (aref *screen* (+ +screen-width+ pos)) (aref tiles 3))))
 
+(defun clear-screen ()
+  "Очистка экрана"
+  (dotimes (i 1000) (setf (aref *screen* i) 0)))
+
 (defun tile-map (x y tiles w h)
   (let ((el (make-instance 'TileMap :x x :y y :tiles tiles :width w :height h)))
     (setf *gui* (cons el *gui*))))
