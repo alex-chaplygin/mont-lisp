@@ -12,7 +12,7 @@
   (setf q 1)
   (loop while (= q 1)
 	do (setf q (video:video-get-events))
-	   ;(render-update)
+	   (render-update)
 	   (sb-sys:with-pinned-objects (*screen* *tiles*)
 	     (video:video-update (sb-sys:vector-sap *screen*) 40 25
 				 (sb-sys:vector-sap *tiles*))))
