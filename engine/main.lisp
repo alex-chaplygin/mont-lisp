@@ -7,6 +7,15 @@
 (defun main ()
   (video:video-init 2)
   (setf q 1)
+  (with-open-file (in "tiles" :direction :input :element-type 'unsigned-byte)
+    (dotimes (i 2000)
+      (setf (aref video:*tiles* i) (read-byte in))))
+  (with-open-file (in "screen" :direction :input :element-type 'unsigned-byte)
+    (dotimes (i 1000)
+      (setf (aref video:*screen* i) (read-byte in))))
+  (with-open-file (in "colors" :direction :input :element-type 'unsigned-byte)
+    (dotimes (i 1000)
+      (setf (aref video:*colors* i) (read-byte in))))
   (loop while (= q 1)
 	do (setf q (video:video-get-events))
 	   (video:render-screen))
@@ -14,4 +23,7 @@
 
 (main)
 
+(setf (aref video:*screen* 0) 4)
+(setf video:*back-multi-color* 9)
+(setf video:*back-multi-color2* 8)
 (video:close-lib)
