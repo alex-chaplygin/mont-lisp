@@ -23,6 +23,7 @@
 (defvar *video* (make-array (* +video-width+ +video-height+)
 			    :element-type '(unsigned-byte 8)))
 (defvar *sprites* (make-array +num-sprites+ :initial-element nil))
+(defvar *sprites-collisions* (make-array +num-sprites+ :initial-element nil))
 (defvar *sprites-data* (make-array (* 256 +sprite-data-size+)
 			    :element-type '(unsigned-byte 8)))
 (defparameter *back-color* 0) ; цвет фона
@@ -80,12 +81,24 @@
 	(incf y))
       (when (= y +video-height+) (return nil)))))
 
-(defun sprite-pixel-color (s x y)
+(defun sprite-pixel-color (id s x y xx yy)
   "Вычисление цвета точки спрайта s"
   (let* ((pos (+ (ash (sprite-num s) 6) y y y (ash x -3))) ; позиция начала строки спрайта
-	 (b (aref *sprites-data* pos))
-	 (multi (sprite-multi s)))
-    (if multi
+	 (b (aref *sprites-data* pos)))
+    (when (sprite-collision s)
+      (block collision
+	(setf (aref *sprites-collisions* id) nil)
+	(dotimes (i +num-sprites+)
+	  (when (/= i id)
+	    (let* ((s2 (aref *sprites* i))
+		   (x2 (sprite-x s2))
+		   (y2 (sprite-y s2)))
+	      (when (and (>= xx x2) (<= xx (+ x2 +sprite-width+)) (>= yy y2)
+			 (<= yy (+ y2 +sprite-height+)))
+		(unless (null (sprite-pixel i s2 (- xx x2) (- yy y2) xx yy))
+		  (setf (aref *sprites-collisions* id) t)
+		  (return-from collision))))))))
+    (if (sprite-multi s)
 	(case (logand (ash b (- (ash (ash (logand x 7) -1) 1) 6)) 3)
 	  (0 nil)
 	  (1 *sprite-color1*)
@@ -93,7 +106,7 @@
 	  (2 (sprite-color s)))
 	(case (logand (ash b (- (logand x 7) 7)) 1)
 	  (0 nil)
-	  (1 (sprite-color s))))))
+	  (1 (sprite-color s))))))	    
 
 (defun render-sprites ()
   "Отрисовка спрайтов"
@@ -115,17 +128,19 @@
 		   (pos (+ xx (* yy +video-width+)))
 		   (cx 0)
 		   (cy 0))
-	      (loop (let ((c (sprite-pixel-color s cx cy)))
+	      (loop (let ((c (sprite-pixel-color i s cx cy xx yy)))
 		      (unless (null c) (setf (aref *video* pos) c)))
 		    (incf cx)
+		    (incf xx)
 		    (incf pos)
 		    (when (= cx cols)
 		      (setf cx 0)
+		      (decf xx cols)
 		      (incf cy)
+		      (incf yy)
 		      (incf pos (- +video-width+ cols)))
 		    (when (= cy rows) (return nil))))))))))
 	      
-
 (defun render-screen ()
   (render-tiles)
   (render-sprites)
