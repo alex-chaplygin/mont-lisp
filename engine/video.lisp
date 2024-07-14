@@ -4,33 +4,33 @@
 
 (in-package :video)
 
-(defconstant +screen-width+ 40)
-(defconstant +screen-height+ 25)
-(defconstant +video-width+ 320)
-(defconstant +video-height+ 200)
-(defconstant +num-sprites+ 8)
-(defconstant +sprite-data-size+ 64)
-(defconstant +sprite-width+ 24)
-(defconstant +sprite-height+ 21)
+(defconstant +screen-width+ 40) ; число плиток по горизонтали
+(defconstant +screen-height+ 25) ; число плиток по вертикали
+(defconstant +video-width+ 320) ; ширина экрана в пикселях
+(defconstant +video-height+ 200) ; высота экрана в пикселях
+(defconstant +num-sprites+ 8)  ; максимальное число спрайтов
+(defconstant +sprite-data-size+ 64) ; размер данных спрайта в байтах
+(defconstant +sprite-width+ 24) ; ширина спрайтов
+(defconstant +sprite-height+ 21) ; высота спрайтов
+; структура спрайта: координаты, номер изображение, цвет, режим мультицвета, проверка столкновений
+(defstruct sprite x y num color multi collision) 
 
-(defstruct sprite x y num color multi collision)
-
-(defvar *screen* (make-array (* +screen-width+ +screen-height+)
+(defvar *screen* (make-array (* +screen-width+ +screen-height+) ; массив плиток
 			     :element-type '(unsigned-byte 8)))
-(defvar *colors* (make-array (* +screen-width+ +screen-height+)
+(defvar *colors* (make-array (* +screen-width+ +screen-height+) ; цвета плиток
 			     :element-type '(unsigned-byte 8)))
-(defvar *tiles* (make-array 2000 :element-type '(unsigned-byte 8)))
-(defvar *video* (make-array (* +video-width+ +video-height+)
+(defvar *tiles* (make-array 2000 :element-type '(unsigned-byte 8))) ; данные плиток
+(defvar *video* (make-array (* +video-width+ +video-height+) ; массив экрана
 			    :element-type '(unsigned-byte 8)))
-(defvar *sprites* (make-array +num-sprites+ :initial-element nil))
-(defvar *sprites-collisions* (make-array +num-sprites+ :initial-element nil))
-(defvar *sprites-data* (make-array (* 256 +sprite-data-size+)
+(defvar *sprites* (make-array +num-sprites+ :initial-element nil)) ; массив спрайтов
+(defvar *sprites-collisions* (make-array +num-sprites+ :initial-element nil)) ; логический массив столкновений спрайтов
+(defvar *sprites-data* (make-array (* 256 +sprite-data-size+) ; данные спрайтов
 			    :element-type '(unsigned-byte 8)))
 (defparameter *back-color* 0) ; цвет фона
 (defparameter *back-multi-color* 1) ; цвет фона 2
 (defparameter *back-multi-color2* 2) ; цвет фона 3
-(defparameter *sprite-color1* 1)
-(defparameter *sprite-color2* 2)
+(defparameter *sprite-color1* 1) ; цвет спрайта 2
+(defparameter *sprite-color2* 2) ; цвет спрайта 3
 
 
 (defun init-lib ()
@@ -82,7 +82,7 @@
       (when (= y +video-height+) (return nil)))))
 
 (defun sprite-pixel-color (id s x y xx yy)
-  "Вычисление цвета точки спрайта s"
+  "Вычисление цвета точки спрайта s, рассчет столкновения с другими спрайтами"
   (let* ((pos (+ (ash (sprite-num s) 6) y y y (ash x -3))) ; позиция начала строки спрайта
 	 (b (aref *sprites-data* pos))
 	 (c (if (sprite-multi s)
@@ -96,7 +96,7 @@
 		  (1 (sprite-color s))))))
     (when (and (sprite-collision s) (not (null c)))
       (block collision
-;	(setf (aref *sprites-collisions* id) nil)
+	(setf (aref *sprites-collisions* id) nil)
 	(dotimes (i +num-sprites+)
 	  (when (and (/= i id) (not (null (aref *sprites* i))))
 	    (let* ((s2 (aref *sprites* i))
@@ -113,7 +113,7 @@
 (defun render-sprites ()
   "Отрисовка спрайтов"
   (dotimes (i +num-sprites+)
-    (let ((s (aref *sprites* (- 7 i))))
+    (let ((s (aref *sprites* (- (- +num-sprites+ 1) i))))
       (unless (null s)
 	(let ((x (sprite-x s))
 	      (y (sprite-y s)))
@@ -142,6 +142,7 @@
 		    (when (= cy rows) (return nil))))))))))
 	      
 (defun render-screen ()
+  "Отрисовка экрана"
   (render-tiles)
   (render-sprites)
   (sb-sys:with-pinned-objects (*video*)
