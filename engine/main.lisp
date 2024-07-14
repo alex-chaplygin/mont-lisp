@@ -33,7 +33,7 @@
 (dotimes (i 1000)
   (setf (aref video:*colors* 803) 11))
 (setf (aref video:*sprites* 1) (video:make-sprite :x 150 :y 130 :num 17 :color 9 :collision nil :multi nil))
-(setf (aref video:*sprites* 0) (video:make-sprite :x 136 :y 134 :num 0 :color 10 :collision t :multi t))
+(setf (aref video:*sprites* 0) (video:make-sprite :x 169 :y 113 :num 0 :color 10 :collision t :multi t))
 (setf (aref video:*screen* 0) 4)
 (setf video:*back-color* 0)
 (setf (aref video:*sprites-collisions* 0) nil)
