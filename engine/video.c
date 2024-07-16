@@ -13,6 +13,7 @@ byte *video_buffer;		/**< видео буфер экрана*/
 SDL_Window *window;		/**< окно SDL */
 SDL_Renderer *renderer;		/**< устройство вывода */
 SDL_Surface *screen;		/**< поверхность экрана без курсора мыши */
+int keys[256];			/**< массив состояний клавиш */
 
 byte palette[NUM_COLORS * 3] = {
     0, 0, 0, //черный
@@ -85,16 +86,22 @@ void video_init(int scale)
 /// Обработка событий клавиатуры и мыши
 int video_get_events()
 {
-  SDL_Event e;
-  if (SDL_PollEvent(&e)) {
-    if (e.type == SDL_QUIT)
-      return 0;
-    /*   else if (e.type == SDL_KEYDOWN)
-      set_key(e.key.keysym.scancode, 1);
-    else if (e.type == SDL_KEYUP)
-    set_key(e.key.keysym.scancode, 0);*/
-  }
-  return 1;
+    SDL_Event e;
+    if (SDL_PollEvent(&e)) {
+	if (e.type == SDL_QUIT)
+	    return 0;
+	else if (e.type == SDL_KEYDOWN)
+	    keys[e.key.keysym.sym] = 1;
+	else if (e.type == SDL_KEYUP)
+	    keys[e.key.keysym.sym] = 0;
+    }
+    return 1;
+}
+
+/// вернуть состояние клавиши
+int get_key(int key)
+{
+    return keys[key];
 }
 
 /** 
