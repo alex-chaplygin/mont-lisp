@@ -1,6 +1,6 @@
 (defpackage :video
   (:use :cl)
-  (:export :video-init :video-get-events :render-screen :video-close :init-lib :close-lib :*screen* :*tiles* :*colors* :*back-color* :*back-multi-color* :*back-multi-color2* :*sprites* :*sprites-data* :*sprite-color1* :*sprite-color2* :*sprites-collisions* :make-sprite))
+  (:export :video-init :video-get-events :render-screen :video-close :get-key :init-lib :close-lib :run :*screen* :*tiles* :*colors* :*back-color* :*back-multi-color* :*back-multi-color2* :*sprites* :*sprites-data* :*sprite-color1* :*sprite-color2* :*sprites-collisions* :make-sprite))
 
 (in-package :video)
 
@@ -38,6 +38,7 @@
     (t (:default "./video")))
   (cffi:use-foreign-library video)
   (cffi:defcfun "video_init" :void (scale :int))
+  (cffi:defcfun "get_key" :int (key :int))
   (cffi:defcfun "video_get_events" :int)
   (cffi:defcfun "video_update" :void (buf :pointer))
   (cffi:defcfun "video_close" :void))
@@ -147,5 +148,14 @@
   (render-sprites)
   (sb-sys:with-pinned-objects (*video*)
     (video-update (sb-sys:vector-sap *video*))))
+
+(defun run (scale)
+  "Главный цикл графики"
+  (video:video-init scale)
+  (let ((q 1))
+    (loop while (= q 1)
+	  do (setf q (video:video-get-events))
+	     (video:render-screen)))
+  (video:video-close))
 
 (init-lib)
