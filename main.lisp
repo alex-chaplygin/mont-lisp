@@ -2,6 +2,7 @@
 (ql:quickload :cffi)
 (load "engine/video.lisp")
 (load "engine/state.lisp")
+(load "rooms.lisp")
 
 (defconstant +key-left+ #x34)
 (defconstant +key-right+ #x36)
@@ -11,9 +12,6 @@
        ((with-open-file (in "tiles" :direction :input :element-type 'unsigned-byte)
 	  (dotimes (i 2000)
 	    (setf (aref video:*tiles* i) (read-byte in))))
-	(with-open-file (in "screen" :direction :input :element-type 'unsigned-byte)
-	  (dotimes (i 1000)
-	    (setf (aref video:*screen* i) (read-byte in))))
 	(with-open-file (in "colors" :direction :input :element-type 'unsigned-byte)
 	  (dotimes (i 1000)
 	    (setf (aref video:*colors* i) (read-byte in))))
@@ -26,7 +24,8 @@
 	(setf video:*back-multi-color* 9)
 	(setf video:*back-multi-color2* 8)
 	(setf video:*sprite-color1* 7)
-	(setf video:*sprite-color2* 2))
+	(setf video:*sprite-color2* 2)
+	(room-1-1))
 	     
        ((let ((x (video:sprite-x *player*)))
 	  (when (= (video:get-key +key-left+) 1)
