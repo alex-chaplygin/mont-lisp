@@ -1,6 +1,6 @@
 (defpackage :video
   (:use :cl)
-  (:export :video-init :video-get-events :render-screen :video-close :get-key :init-lib :close-lib :run :*screen* :*tiles* :*colors* :*back-color* :*back-multi-color* :*back-multi-color2* :*sprites* :*sprites-data* :*sprite-color1* :*sprite-color2* :*sprites-collisions* :make-sprite :sprite-x :sprite-y))
+  (:export :video-init :video-get-events :render-screen :video-close :get-key :init-lib :close-lib :run :*screen* :*tiles* :*colors* :*back-color* :*back-multi-color* :*back-multi-color2* :*sprites* :*sprites-data* :*sprite-color1* :*sprite-color2* :*sprites-collisions* :make-sprite :sprite-x :sprite-y :+screen-width+ :+screen-height+))
 
 (in-package :video)
 
