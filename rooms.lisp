@@ -21,7 +21,7 @@
 (defmacro hline2 (x y w tile tile2 color)
   "Заполнение горизонтальной линии из чередующихся плиток"
   `(let ((pos (pos-xy ,x ,y)))
-     (dotimes (i ,(ash w -1))
+     (dotimes (i (ash ,w -1))
        (setf (aref video:*screen* pos) ,tile)
        (setf (aref video:*colors* pos) ,color)
        (incf pos)
@@ -76,6 +76,12 @@
   `(dotimes (i ,count)
      (quad (+ ,x (ash i 1)) ,y (+ ,start (ash i 2)) ,color)))
 
+(defmacro std-room ()
+  "Типовая комната с коридором"
+  `(progn (all-bricks)
+	  (empty 0 4 video:+screen-width+ 6)
+	  (hline2 0 4 video:+screen-width+ #x1b #x1c *level-color*)))
+	  
 (defun room-1-1 ()
   (all-bricks)
   (hline2 2 4 38 #x1b #x1c *level-color*)
@@ -90,5 +96,6 @@
   (empty 19 19 3 6)
   (rope 20 18 7)
   )
-  
+
 (room-1-1)
+(std-room)
